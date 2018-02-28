@@ -25,8 +25,6 @@ Longitude = df.CurrentLongitude 	# Longitude
 Channel = df.Channel 				# Channel (Less important)
 RSSI = df.RSSI 					 	# Received Signal Strength Integrity.
 
-
-
 countMAC = cl.Counter(MAC)		# stores recurring addresses.
 countSSID = cl.Counter(SSID)	# store recurring network or access point names.
 
@@ -35,4 +33,4 @@ Time = df.FirstSeen				# imports Time.
 if(len(Time)!=len(MAC)):
 	raise ValueError(error_str)
 
-print(df)
+print(Time[1524])
