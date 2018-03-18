@@ -41,12 +41,14 @@ elements = fiList[1]		# in case the types per item in fiList are required.
 fiList = fiList[2:][:]	# removes meta-data topline and second line of elements.
 GPS = []						# pre-allocate.
 MAC = []
+RSSI = []
 results = []
 
 # explicitly accesses the GPS values. [Latitude][Longitude]
 for index, value in enumerate(fiList):
 	GPS.append(fiList[index][6:8])
 	MAC.append(fiList[index][0])
+	RSSI.append(fiList[index][5])
 
 GPS = [[float(j) for j in i] for i in GPS]	# converts to float
 
@@ -54,6 +56,7 @@ GPS = [[float(j) for j in i] for i in GPS]	# converts to float
 fiDict = dict(zip(MAC,GPS))
 
 MAC_count = cl.Counter(MAC)
+RSSI_count = cl.Counter(RSSI)
 
 
 def list_duplicates(seq):
@@ -72,5 +75,7 @@ for key, value in fiDict.items():
 		results.append(value)
 
 
-for key, value in MAC_count.items():
-	print(key,value)
+#for key, value in MAC_count.items():
+#	print(key,value)
+
+print(RSSI_count)
