@@ -4,6 +4,7 @@ import csv, os
 import collections as cl
 import pandas as pd
 from functools import partial
+import matplotlib.pyplot as plt
 
 error_str = 'Mismatch in Array sizes.'
 correct_str = '...Passed Size Test'
@@ -58,6 +59,24 @@ fiDict = dict(zip(MAC,GPS))
 MAC_count = cl.Counter(MAC)
 RSSI_count = cl.Counter(RSSI)
 
+LatLongDict = dict()
+
+
+for item in fiDict.items():
+	print(str(item) + '\n')
+
+# grabbing avg. Lat/Long
+for key,value in fiDict.items():
+	if key in LatLongDict.keys():
+		print('Caught an instance.')
+		LatLongDict[key].append((fiDict[value[0]],fiDict[value[1]]))
+	else:
+		print('New Key.')
+		LatLongDict[str(key)] = (fi)
+
+print(LatLongDict['b4:5d:50:14:26:92'])
+#print(fiDict)
+
 
 def list_duplicates(seq):
     tally = cl.defaultdict(list)
@@ -67,15 +86,16 @@ def list_duplicates(seq):
                             if len(locs)>1)
 
 # prints duplicates.
-#for dup in sorted(list_duplicates(MAC)):
-#	print(dup)
-
-for key, value in fiDict.items():
-	if key == 'b4:5d:50:14:26:90':
-		results.append(value)
+for dup in sorted(list_duplicates(MAC)):
+	print(dup)
 
 
-#for key, value in MAC_count.items():
-#	print(key,value)
 
-print(RSSI_count)
+# MAC Address Histogram.
+#plt.bar(range(len(MAC_count)),MAC_count.values(),align="center")
+#plt.xticks(range(len(MAC_count)), MAC_count.keys())
+#plt.xticks(rotation=70)
+#plt.xlabel('MAC Addresses')
+#plt.xlim(0, 30)
+#plt.ylabel('Frequency')
+#plt.show()
