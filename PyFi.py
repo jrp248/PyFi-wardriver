@@ -72,9 +72,9 @@ for key,value in fiDict.items():
 		LatLongDict[key].append((fiDict[value[0]],fiDict[value[1]]))
 	else:
 		print('New Key.')
-		LatLongDict[str(key)] = (fi)
+		#LatLongDict[str(key)] = (fi)
 
-print(LatLongDict['b4:5d:50:14:26:92'])
+#print(LatLongDict['b4:5d:50:14:26:92'])
 #print(fiDict)
 
 
@@ -92,10 +92,9 @@ for dup in sorted(list_duplicates(MAC)):
 
 
 # MAC Address Histogram.
-#plt.bar(range(len(MAC_count)),MAC_count.values(),align="center")
+plt.bar(range(len(MAC_count)),MAC_count.values(),align="center")
 #plt.xticks(range(len(MAC_count)), MAC_count.keys())
 #plt.xticks(rotation=70)
-#plt.xlabel('MAC Addresses')
-#plt.xlim(0, 30)
-#plt.ylabel('Frequency')
-#plt.show()
+plt.xlabel('MAC Addresses')
+plt.ylabel('Frequency')
+plt.show()
