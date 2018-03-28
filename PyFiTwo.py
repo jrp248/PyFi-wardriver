@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import csv
 import os
 import collections as cl
+import datetime as dt
+
 
 script_dir = os.path.dirname(__file__)
 csv_path = os.path.join(script_dir,'/CSV/WigleWifi_2018_0220.csv')
@@ -16,12 +18,15 @@ header = next(fileReader)		# read relevant categories in.
 
 fiDict = dict()	# pre-allocate.
 fiList = []
+fiTime = []
 
 # extract meta-data with the builtin CSV reader.
 for row in fileReader:
 	MAC = row[0]
 	GPS = [row[6],row[7]]
+	UTC = row[3]
 	fiList.append([MAC,GPS])
+	fiTime.append([MAC,UTC])
 
 
 
@@ -39,7 +44,7 @@ for item in fiList:
 #	print(str(fiDict[item]) + '\n')
 
 
-print(fiList[5][0]) # <- figure out how to properly access the MAC addresses.
+#print(fiList[5][0]) # <- figure out how to properly access the MAC addresses.
 
 # plot the histogram for the data to show concentration.
 #plt.bar(range(len(MAC_count)),MAC_count.values(),align="center")
@@ -48,3 +53,41 @@ print(fiList[5][0]) # <- figure out how to properly access the MAC addresses.
 #plt.xlabel('MAC Addresses')
 #plt.ylabel('Frequency')
 #plt.show()
+
+"""
+First, create fiDictTime containing MAC address keys and their corresponding
+sliced UTC time values. Develop a function that accepts the UTC string, and provides
+the datetime object instead. Find the time delta if the MAC addresses are unalike.
+"""
+
+# <- fiTime[0][1] returns the UTC. fiTime[0][0] returns MAC.
+TimeSplit = fiTime[0][1].split(" ")
+#print(TimeSplit[1])
+
+TimeSplit = [] 	# temporary variable for splitting and R/W.
+
+
+# removing datestamp, passing only the UTC hour:minute:second to second list entry.
+for item in fiTime:
+	TimeSplit = item[1].split(" ")
+	item[1] = TimeSplit[1]
+
+FirstTime = []
+CompareTime = []
+fiTimeMatrix = []
+timedelt_original = dt.timedelta()
+timedelt_compare = dt.timedelta()
+
+# store each hour, minute and second locally, pass it to the timedelta object.
+for item in fiTime:
+	for comp_item in fiTime:
+		if item[0] != comp_item[0]:
+			# do stuff!
+			FirstTime = item[1].split(":")
+			CompTime = comp_item[1].split(":")
+			timedelt_original = dt.timedelta(hours=int(FirstTime[0]),minutes=int(FirstTime[1]),seconds=int(FirstTime[2]))
+			timedelt_compare = dt.timedelta(hours=int(CompTime[0]),minutes=int(CompTime[1]),seconds=int(CompTime[2]))
+			diff = abs(timedelt_compare - timedelt_original)
+			fiTimeMatrix.append([item[0], comp_item[0], diff])
+
+print(fiTimeMatrix[27][2])

@@ -5,6 +5,7 @@ import collections as cl
 import pandas as pd
 from functools import partial
 import matplotlib.pyplot as plt
+import datetime as dt
 
 error_str = 'Mismatch in Array sizes.'
 correct_str = '...Passed Size Test'
@@ -45,7 +46,7 @@ MAC = []
 RSSI = []
 results = []
 
-# explicitly accesses the GPS values. [Latitude][Longitude]
+# explicitly accesses the GPS values. [Latitude][Longitude] !ENUMERATE REMOVES VALUES.
 for index, value in enumerate(fiList):
 	GPS.append(fiList[index][6:8])
 	MAC.append(fiList[index][0])
@@ -78,23 +79,29 @@ for key,value in fiDict.items():
 #print(fiDict)
 
 
-def list_duplicates(seq):
-    tally = cl.defaultdict(list)
-    for i,item in enumerate(seq):
-        tally[item].append(i)
-    return ((key,locs) for key,locs in tally.items() 
-                            if len(locs)>1)
-
-# prints duplicates.
-for dup in sorted(list_duplicates(MAC)):
-	print(dup)
+## Another way to print duplicates.
+# def list_duplicates(seq):
+#     tally = cl.defaultdict(list)
+#     for i,item in enumerate(seq):
+#         tally[item].append(i)
+#     return ((key,locs) for key,locs in tally.items() 
+#                             if len(locs)>1)
+# 
+# for dup in sorted(list_duplicates(MAC)):
+# 	print(dup)
 
 
 
 # MAC Address Histogram.
-plt.bar(range(len(MAC_count)),MAC_count.values(),align="center")
+#plt.bar(range(len(MAC_count)),MAC_count.values(),align="center")
 #plt.xticks(range(len(MAC_count)), MAC_count.keys())
 #plt.xticks(rotation=70)
-plt.xlabel('MAC Addresses')
-plt.ylabel('Frequency')
-plt.show()
+#plt.xlabel('MAC Addresses')
+#plt.ylabel('Frequency')
+#plt.show()
+
+
+time1 = dt.timedelta(hours=16,minutes=30,seconds=0)
+time2 = dt.timedelta(hours=16,minutes=15,seconds=0)
+
+print(abs(time1 - time2))
