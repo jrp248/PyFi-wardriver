@@ -51,12 +51,13 @@ for item in fiList:
 		fiDict[item[0]] = ([item[1][0],item[1][1]])
 	
 
+"""
+HISTOGRAM PLOTTING
+"""
+
 #for item in fiDict:
 #	print(str(fiDict[item]) + '\n')
-
-
 #print(fiList[5][0]) # <- figure out how to properly access the MAC addresses.
-
 # plot the histogram for the data to show concentration.
 #plt.bar(range(len(MAC_count)),MAC_count.values(),align="center")
 #plt.xticks(range(len(MAC_count)), MAC_count.keys())
@@ -121,14 +122,84 @@ for key, value in fiDict.items():	# iterating the GPS values.
 	avg_Long = np.mean(TotalLong)
 	fiDict_avg.update({key:[avg_Lat,avg_Long]})
 
+
+"""
+FOR EXPORTING TO GOOGLE FUSION TABLE FORMAT
+"""
+
 #for key, value in fiDict_avg.items():
 #	print(key,value)
-print(fiTimeMatrix)
+print('Raw Matrix: ',fiTimeMatrix[27][0:2])
 #csv_output = []
-
 #for key, value in fiDict_avg.items():
 #	temp = [value[0],value[1],key]
 #	csv_output.append(temp)
-
 #df = pd.DataFrame(csv_output, columns=["Latitude","Longitude","MAC"])
 #df.to_csv('Output/avgLocation.csv',index=False)
+
+
+"""
+MAKING TABLE OF  STRING VALUES.
+"""
+
+table_data = []
+column_names = []
+index_names = []
+
+for item in fiTimeMatrix:
+	table_data.append([str(item[0]),str(item[1]),str(item[2])])
+	index_names.append(str(item[0]))
+
+print('List Length: ',len(table_data))
+print('List Entry: ',table_data[4])
+print('\n')
+
+"""
+PERFORM A SIMILAR COMPARISON WHERE IF A COMPARISON
+ITEM DOESN'T OCCUR, APPEND A NULL.
+"""
+# creating a hash table, with the index corresponding to the position in the
+# numpy matrix.
+#MACtoIndex = {}
+#cnt = 0
+#
+# concern that fiMAC may not consolidate only relevant values.
+#for addr in index_names:
+#	if not addr in MACtoIndex:
+#		MACtoIndex.update({addr:cnt})
+#		cnt = cnt + 1
+#
+#
+# creating full matrix.
+#matrix = np.full((len(table_data),len(table_data)),np.nan)
+#
+#for entry in table_data:
+#	empty[MACtoIndex[entry[0]]][MACtoIndex[entry[1]]] = entry[2]
+
+
+# Boolean for duplicate checking.
+def boolDupCheck(e1,e2):
+	"""
+	Determines if duplicates are present. e1 = [MAC1, MAC2, Time].
+	"""
+	if( (e1[0]==e2[0]) and (e1[1]==e2[1]) and (e1[2]==e2[2]) ) or ( (e1[0]==e2[1]) and (e1[1]==e2[0]) and (e1[2]==e2[2]) ):
+		return True
+	else:
+		return False
+
+
+table_data_no_dups = []
+
+for e1 in table_data:
+	found = False
+	for e2 in table_data_no_dups:
+		if (boolDupCheck(e1, e2)):
+			found = True
+			break
+	if not found:
+			table_data_no_dups.append(e1)
+			print(len(table_data_no_dups)/len(table_data))
+	if not table_data_no_dups:
+		table_data_no_dups.append(e1) # initializes table if nothing is present. Second for-loop then starts.
+
+print(len(table_data_no_dups))

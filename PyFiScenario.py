@@ -12,3 +12,15 @@ even = x[1::2]
 
 print(odd)
 print(even)
+
+e1 = 'b4:d9'
+e2 = 'b4:d9'
+
+if(e1 == e2):
+	print('got it!')
+
+
+table = []
+
+if not table:
+	print('Got it again!')

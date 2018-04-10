@@ -6,6 +6,7 @@ import pandas as pd
 from functools import partial
 import matplotlib.pyplot as plt
 import datetime as dt
+from prettytable import PrettyTable
 
 script_dir = os.path.dirname(__file__)
 csv_path = os.path.join(script_dir,'/CSV/WigleWifi_2018_0220.csv')
