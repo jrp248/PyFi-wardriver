@@ -5,6 +5,7 @@ import csv
 import os
 import collections as cl
 import datetime as dt
+import pandas as pd
 
 
 script_dir = os.path.dirname(__file__)
@@ -19,7 +20,7 @@ header = next(fileReader)		# read relevant categories in.
 fiDict = dict()	# pre-allocate.
 fiList = []
 fiTime = []
-
+fiMAC = []
 # extract meta-data with the builtin CSV reader.
 for row in fileReader:
 	MAC = row[0]
@@ -27,6 +28,16 @@ for row in fileReader:
 	UTC = row[3]
 	fiList.append([MAC,GPS])
 	fiTime.append([MAC,UTC])
+	fiMAC.append(MAC)
+
+# Convert each GPS element to float.
+#for row in fiList:
+#	element = row[1][0:2]
+#	row[1][0] = float(element[0])
+#	row[1][1] = float(element[1])
+
+
+
 
 
 
@@ -35,7 +46,7 @@ for row in fileReader:
 
 for item in fiList:	
 	if item[0] in fiDict.keys():
-		fiDict[item[0]].append([item[1][0],item[1][1]])
+		fiDict[item[0]].extend([item[1][0],item[1][1]]) #! OR APPEND
 	else:
 		fiDict[item[0]] = ([item[1][0],item[1][1]])
 	
@@ -90,4 +101,34 @@ for item in fiTime:
 			diff = abs(timedelt_compare - timedelt_original)
 			fiTimeMatrix.append([item[0], comp_item[0], diff])
 
-print(fiTimeMatrix[27][2])
+# print(fiTimeMatrix[27][2]) 	# <- fiTimeMatrix Example.
+MAC_count = cl.Counter(fiMAC)
+
+
+# Inserting a new dictionary containing the average Latitude and Longitude per MAC address.
+fiDict_avg = {}
+TotalLat = []
+TotalLong = []
+
+
+# averaging the Lat/Long per item in the fiDict. If Latitude is odd, and Longitude is even...
+for key, value in fiDict.items():	# iterating the GPS values.
+	float_value = [float(i) for i in value]
+	TotalLat = float_value[0::2]
+	TotalLong = float_value[1::2]
+
+	avg_Lat = np.mean(TotalLat)
+	avg_Long = np.mean(TotalLong)
+	fiDict_avg.update({key:[avg_Lat,avg_Long]})
+
+#for key, value in fiDict_avg.items():
+#	print(key,value)
+print(fiTimeMatrix)
+#csv_output = []
+
+#for key, value in fiDict_avg.items():
+#	temp = [value[0],value[1],key]
+#	csv_output.append(temp)
+
+#df = pd.DataFrame(csv_output, columns=["Latitude","Longitude","MAC"])
+#df.to_csv('Output/avgLocation.csv',index=False)
