@@ -52,16 +52,21 @@ for item in fiList:
 """
 HISTOGRAM PLOTTING
 """
+uniq_MAC_count = []
+for item in fiMAC:
+	if item not in uniq_MAC_count:
+		uniq_MAC_count.append(item)
 
 #for item in fiDict:
 #	print(str(fiDict[item]) + '\n')
 #print(fiList[5][0]) # <- figure out how to properly access the MAC addresses.
 # plot the histogram for the data to show concentration.
-plt.bar(range(len(MAC_count)),MAC_count.values(),align="center")
-plt.xticks(range(len(MAC_count)), MAC_count.keys())
+plt.bar(range(len(MAC_count)),MAC_count.values(),align="edge")
 plt.xticks(rotation=70)
 plt.xlabel('MAC Addresses')
 plt.ylabel('Frequency')
+plt.xlim(0,len(uniq_MAC_count))
+plt.grid()
 plt.show()
 
 
