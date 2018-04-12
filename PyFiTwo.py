@@ -37,9 +37,7 @@ for row in fileReader:
 #	row[1][1] = float(element[1])
 
 
-
-
-
+MAC_count = cl.Counter(fiMAC)
 
 # sweep List, check if duplicate is present, append GPS data. If the
 # entry isn't there, add it within the "else" statement.
@@ -59,12 +57,15 @@ HISTOGRAM PLOTTING
 #	print(str(fiDict[item]) + '\n')
 #print(fiList[5][0]) # <- figure out how to properly access the MAC addresses.
 # plot the histogram for the data to show concentration.
-#plt.bar(range(len(MAC_count)),MAC_count.values(),align="center")
-#plt.xticks(range(len(MAC_count)), MAC_count.keys())
-#plt.xticks(rotation=70)
-#plt.xlabel('MAC Addresses')
-#plt.ylabel('Frequency')
-#plt.show()
+plt.bar(range(len(MAC_count)),MAC_count.values(),align="center")
+plt.xticks(range(len(MAC_count)), MAC_count.keys())
+plt.xticks(rotation=70)
+plt.xlabel('MAC Addresses')
+plt.ylabel('Frequency')
+plt.show()
+
+
+quit()
 
 """
 First, create fiDictTime containing MAC address keys and their corresponding
@@ -187,6 +188,7 @@ def boolDupCheck(e1,e2):
 	else:
 		return False
 
+quit()
 
 table_data_no_dups = []
 
