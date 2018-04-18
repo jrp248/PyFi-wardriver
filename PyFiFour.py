@@ -39,10 +39,105 @@ for x in fiMAC:
 
 print('Unique Addresses: ',len(unique_MAC))
 
+
 # removing datestamp and rewriting the fiTime list.
 for item in fiTime:
 	TimeSplit = item[1].split(" ")
 	item[1] = TimeSplit[1]
 
-# Rather, it may be more beneficial to perform time operations in a single
-# comparison loop of the numPy matrix/hash table created by M.
+
+
+# search through fiTime, using entries in unique_MAC. if an occurrence pops,
+# add that time value to the new list. Afterwards, skip all other instances of that MAC address
+# re-occurring. Compare for next unique_MAC.
+
+unique_fiTime = []
+
+for unique_item in unique_MAC:
+	for comparison in fiTime:
+		if unique_item == comparison[0]:
+			unique_fiTime.append([unique_item, comparison[1]])
+			break
+
+
+print('Validate Size: ',len(unique_fiTime)) # validate its the same length as unique_MAC.
+
+"""
+Establishing the fiTimeMatrix. If the duplicates are present, make the time delta 0.
+"""
+
+fiTimeMatrix = []
+
+FirstTime = []
+CompTime = []
+timedelt_original = dt.timedelta()
+timedelt_compare = dt.timedelta()
+zero_time = dt.timedelta(hours=0,minutes=0,seconds=0)
+
+# make sure it's searching through uniqueMAC instead - append first time instance.
+
+for item in unique_fiTime:
+	for comp_item in unique_fiTime:
+		if item[0] == comp_item[0]:
+			fiTimeMatrix.append([item[0], comp_item[0], zero_time])
+		else:
+			FirstTime = item[1].split(":")
+			CompTime = comp_item[1].split(":")
+			timedelt_original = dt.timedelta(hours=int(FirstTime[0]),minutes=int(FirstTime[1]),seconds=int(FirstTime[2]))
+			timedelt_compare = dt.timedelta(hours=int(CompTime[0]),minutes=int(CompTime[1]),seconds=int(CompTime[1]))
+			diff = abs(timedelt_compare - timedelt_original)
+			fiTimeMatrix.append([item[0], comp_item[0], diff])
+
+
+print('Single Entry:',fiTimeMatrix[27][:])
+
+
+
+"""
+Creating the hash table for correct numpy indexing. Needs a fiTimeMatrix for searching.
+Need the for loop that is going through and filling the numpy matrix to be an outer row search,
+and the inner loop to be a column search.
+"""
+
+# Hashing operation.
+
+index_names = []
+table_data = []
+column_names = []
+
+for item in fiTimeMatrix:
+	table_data.append([str(item[0]), str(item[1]),str(item[2])])
+	index_names.append(str(item[0]))
+
+MACtoIndex = {}
+cnt = 0
+
+for addr in index_names:
+	if not addr in MACtoIndex:
+		MACtoIndex.update({addr:cnt})
+		cnt = cnt + 1
+
+matrix = np.zeros(shape=(len(unique_MAC),len(unique_MAC)),dtype=object)
+
+print('Matrix Dimensions: ',matrix.shape)
+print('Assessing Organization of Table...')
+print(table_data[0][:])
+print(table_data[1][:])
+print(table_data[1167][:])
+str1 = 'f0:ab:54:bc:30:eb'
+str2 = 'a0:63:91:a0:a5:33'
+print(str1,' Hash Table Contents: ',MACtoIndex[str1])
+print(str2,' Hash Table Contents: ',MACtoIndex[str2],'\n')
+
+for entry in table_data:
+	matrix[MACtoIndex[str(entry[0])]][MACtoIndex[str(entry[1])]] = entry[2]
+
+print(' Numpy Matrix Contents:\n')
+print(matrix)
+
+"""
+Now that the matrix is assembled, use the Hash Table Keys for the columns
+and rows in the pandas dataframe.
+"""
+
+pd_matrix = pd.DataFrame(matrix, index=MACtoIndex.keys(), columns=MACtoIndex.keys())
