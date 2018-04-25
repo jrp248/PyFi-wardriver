@@ -177,7 +177,7 @@ ITEM DOESN'T OCCUR, APPEND A NULL.
 #
 #
 # creating full matrix.
-#matrix = np.full((len(table_data),len(table_data)),np.nan)
+#matrix = np.full((len(table_data),len(table_data)),np.nan,dtype=object)
 #
 #for entry in table_data:
 #	empty[MACtoIndex[entry[0]]][MACtoIndex[entry[1]]] = entry[2]

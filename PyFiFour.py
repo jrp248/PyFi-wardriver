@@ -100,25 +100,59 @@ and the inner loop to be a column search.
 """
 
 # Hashing operation.
-
 index_names = []
 table_data = []
 column_names = []
 
+# sifting through total fiTimeMatrix, assigning index and table_data.
 for item in fiTimeMatrix:
 	table_data.append([str(item[0]), str(item[1]),str(item[2])])
 	index_names.append(str(item[0]))
 
+
+# table_data times may not be symmetric. Perform boolean check for duplicates, then remove.
+def boolCheck(e1,e2):
+	"""
+	Determines if duplicates are present. e1 = [MAC1, MAC2, Time]
+	"""
+	if(e1[0]==e2[1]) and (e1[1]==e2[0]):
+		return True
+	else:
+		return False
+
+# creating new table_data.
+table_data_no_dups = []
+print('Duplicate Removal. Length of initial Table: ',len(table_data))
+print('Removing Duplicates...')
+for e1 in table_data:
+	found = False 		# starts with no duplicate found.
+	for e2 in table_data_no_dups:
+		if(boolCheck(e1,e2)):
+			found = True
+			break
+	if not found:
+		table_data_no_dups.append(e1)
+	if not table_data_no_dups:
+		table_data_no_dups.append(e1) 	# initializes table if nothing present.
+
+print('Done.')
+
+
+
+# dictionary that will assign the matrix position to a MAC address.
 MACtoIndex = {}
 cnt = 0
 
+# adds the MAC address to the list if not present. Increments index counter.
 for addr in index_names:
 	if not addr in MACtoIndex:
 		MACtoIndex.update({addr:cnt})
 		cnt = cnt + 1
 
+# formatting NumPy matrix.
 matrix = np.zeros(shape=(len(unique_MAC),len(unique_MAC)),dtype=object)
 
+# dimensionality check.
 print('Matrix Dimensions: ',matrix.shape)
 print('Assessing Organization of Table...')
 print(table_data[0][:])
@@ -129,11 +163,13 @@ str2 = 'a0:63:91:a0:a5:33'
 print(str1,' Hash Table Contents: ',MACtoIndex[str1])
 print(str2,' Hash Table Contents: ',MACtoIndex[str2],'\n')
 
-for entry in table_data:
+# actual table assignment.
+for entry in table_data_no_dups:
 	matrix[MACtoIndex[str(entry[0])]][MACtoIndex[str(entry[1])]] = entry[2]
 
 print(' Numpy Matrix Contents:\n')
 print(matrix)
+quit()
 
 """
 Now that the matrix is assembled, use the Hash Table Keys for the columns
