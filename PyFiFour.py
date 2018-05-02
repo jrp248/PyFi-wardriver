@@ -120,6 +120,7 @@ def boolCheck(e1,e2):
 	else:
 		return False
 
+"""
 # creating new table_data.
 table_data_no_dups = []
 print('Duplicate Removal. Length of initial Table: ',len(table_data))
@@ -137,7 +138,7 @@ for e1 in table_data:
 
 print('Done.')
 
-
+"""
 
 # dictionary that will assign the matrix position to a MAC address.
 MACtoIndex = {}
@@ -164,12 +165,11 @@ print(str1,' Hash Table Contents: ',MACtoIndex[str1])
 print(str2,' Hash Table Contents: ',MACtoIndex[str2],'\n')
 
 # actual table assignment.
-for entry in table_data_no_dups:
+for entry in table_data:
 	matrix[MACtoIndex[str(entry[0])]][MACtoIndex[str(entry[1])]] = entry[2]
 
 print(' Numpy Matrix Contents:\n')
 print(matrix)
-quit()
 
 """
 Now that the matrix is assembled, use the Hash Table Keys for the columns
