@@ -81,7 +81,6 @@ for unique_item in unique_MAC:
 
 
 # Establishing the fiTimeMatrix. If the duplicates are present, make the time delta 0.
-
 fiTimeMatrix = []
 
 FirstTime = []
@@ -159,7 +158,69 @@ for item in GPS_avg:
 		else:
 			pass
 
-print(MAC_to_place)
+
+# Now that the MAC addresses have been mapped to a location, the raw time matrix needs to be converted, 
+# such that the MAC address is now its corresponding location. A searching routine will then grab each time delta and average it,
+# before re-hashing the matrix and forming the human-readable time matrices.
+
+for row in fiTimeMatrix:
+	source = row[0]
+
+	for key, value in MAC_to_place.items():
+		for entry in value:
+			if entry == source:
+				row[0] = key 		# rewrite the value.
+				isFound = True 		# set the boolean true.
+				break
+			else:
+				pass
+		
+		if(isFound): 				# break the total dictionary search if the locations been found.
+			isFound = False 		# set it to False before next item in place search.
+			break
+
+
+print('Finished Source, now attempting Destination...')
+
+for row in fiTimeMatrix:
+	destination = row[1]
+
+	for key, value in MAC_to_place.items():
+		for entry in value:
+			if entry == destination:
+				row[1] = key
+				isFound = True
+				break
+			else:
+				pass
+
+		if(isFound):
+			isFound = False
+			break
+
+print('Columns Done. Printing...')
+print(fiTimeMatrix[100])
+
+# fiTimeMatrix = [Location1, Location2, Timedelta]
+
+timeTable = dict({key:dict({comp_key:[] for comp_key in location_list}) for key in location_list})
+
+for item in fiTimeMatrix:
+	if item[0] not in location_list or item[1] not in location_list:
+		continue
+	timeTable[item[0]][item[1]].append(item[2])
+
+
+
+panda_Matrix = pd.DataFrame(columns=location_list,index=location_list)
+
+for keys, values in timeTable.items():
+	for keys2, vector in values.items():
+		deltaT = sum(vector, dt.timedelta()) / len(vector)
+		panda_Matrix[keys][keys2] = deltaT
+
+panda_Matrix.to_csv(path_or_buf='final_result.csv',sep=',')
+
 
 
 
