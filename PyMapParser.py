@@ -65,13 +65,15 @@ for item in fiTime:
 	TimeSplit = item[1].split(" ")
 	item[1] = TimeSplit[1]
 
+
 # only extracting unique MACs from list.
 unique_MAC = []
 for x in fiMAC:
 	if x not in unique_MAC:
 		unique_MAC.append(x)
 
-# Comparing for next unique MAC address.
+
+# Comparing for next unique MAC address. <MODIFY HERE>
 unique_fiTime = []
 for unique_item in unique_MAC:
 	for comparison in fiTime:
@@ -80,9 +82,49 @@ for unique_item in unique_MAC:
 			break
 
 
+
+# Need to remove entries that are re-seen later in time. (Retracing back to A-lot problem.)
+def isGreater(firstSeen,comparator):
+	"""
+	Checks to see if the time distance is greater than some obvious delta.
+	"""
+
+	reasonableTime = dt.timedelta(hours=0,minutes=20,seconds=0)
+
+	original = firstSeen.split(":")
+	future = comparator.split(":")
+	td_original = dt.timedelta(hours=int(original[0]),minutes=int(original[1]),seconds=int(original[2]))
+	td_future = dt.timedelta(hours=int(future[0]),minutes=int(future[1]),seconds=int(future[2]))
+	diff = abs(td_future - td_original)
+	if diff > reasonableTime:
+		return True
+	else:
+		return False
+
+
+
+# Removing inconsistent MAC time entries.
+TimeFix = dict({key : [] for key in unique_MAC})
+for entry in fiTime:
+	if not TimeFix[entry[0]]:
+		TimeFix[entry[0]].append(entry[1])
+	elif not isGreater(TimeFix[entry[0]][0],entry[1]):
+		TimeFix[entry[0]].append(entry[1])
+	elif isGreater(TimeFix[entry[0]][0],entry[1]):
+		continue
+	else:
+		print('Catch condition?')
+
+
+# output.
+Fix_fiTime = []
+for key, value in TimeFix.items():
+	for list_item in value:
+		Fix_fiTime.append([key,list_item])
+
+
 # Establishing the fiTimeMatrix. If the duplicates are present, make the time delta 0.
 fiTimeMatrix = []
-
 FirstTime = []
 CompTime = []
 timedelt_original = dt.timedelta()
@@ -219,8 +261,15 @@ for keys, values in timeTable.items():
 		deltaT = sum(vector, dt.timedelta()) / len(vector)
 		panda_Matrix[keys][keys2] = deltaT
 
-panda_Matrix.to_csv(path_or_buf='final_result.csv',sep=',')
+np_array = panda_Matrix.values
+
+for row in range(0,len(np_array)):
+	for column in range(0,len(np_array[row])):
+		np_array[row][column] = np_array[column][row]
+		if row == column:
+			np_array[row][column] = zero_time
 
 
+print(np_array)
 
-
+panda_Matrix.to_csv(path_or_buf='Output/final_result3.csv',sep=',')
